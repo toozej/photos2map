@@ -1,0 +1,224 @@
+---
+name: cicd
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: "0 1 * * 1"
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '^1.23'
+          check-latest: true
+      - name: Run pre-commit
+        run: |
+          pip install pre-commit
+          make pre-commit
+      - name: Run tests
+        run: |
+          make test
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  codeql-analyze:
+    name: codeql-analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '^1.23'
+          check-latest: true
+      - uses: github/codeql-action/init@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        with:
+          languages: go
+      - uses: github/codeql-action/autobuild@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - uses: github/codeql-action/analyze@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+
+  trivy-scan-source:
+    name: trivy-scan-source
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  snyk:
+    name: snyk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: snyk/actions/setup@master # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '^1.23'
+          check-latest: true
+      - name: Snyk monitor
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  goreleaser:
+    needs: checks
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch all tags
+        run: git fetch --force --tags
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '^1.23'
+          check-latest: true
+      - uses: sigstore/cosign-installer@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - uses: anchore/sbom-action/download-syft@v0 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - name: Login to DockerHub
+        uses: docker/login-action@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        # https://docs.docker.com/docker-hub/access-tokens/
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_GHCR_TOKEN }}
+      - name: Login to Quay Container Registry
+        uses: docker/login-action@v3 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        # https://github.com/marketplace/actions/push-to-registry#examples
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+          workdir: '/home/runner/work/golang-starter/golang-starter'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+  verify_signed_binaries:
+    runs-on: ubuntu-latest
+    needs: goreleaser
+    permissions: {}
+    strategy:
+      matrix:
+        platform: ['darwin', 'linux', 'windows']
+        arch: ['all', 'amd64_v1', 'arm64', 'arm_7', '386']
+        extension: ['', '.exe']
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - name: Get public cosign key
+        run: |
+          curl --silent https://raw.githubusercontent.com/toozej/golang-starter/main/golang-starter.pub -O
+      - name: Verify signatures of binaries
+        run: |
+          FILE=./dist/golang-starter_${{ matrix.platform }}_${{ matrix.arch }}/golang-starter${{ matrix.extension }}
+          if test -f "${FILE}"; then
+            echo "verifying binary: ${FILE}"
+            cosign verify --key golang-starter.pub --signature "${FILE}.sig" "${FILE}"
+          else
+            echo "skipping verifying non-existant binary: ${FILE}"
+          fi
+
+  verify_signed_archives:
+    runs-on: ubuntu-latest
+    needs: goreleaser
+    permissions: {}
+    strategy:
+      matrix:
+        platform: ['Darwin', 'Linux', 'Windows']
+        arch: ['all', 'arm64', 'armv7', 'i386', 'x86_64']
+        extension: ['tar.gz', 'zip']
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - name: Get public cosign key
+        run: |
+          curl --silent https://raw.githubusercontent.com/toozej/golang-starter/main/golang-starter.pub -O
+      - name: Verify signatures of archives
+        run: |
+          FILE=./dist/golang-starter_${{ matrix.platform }}_${{ matrix.arch }}.${{ matrix.extension }}
+          if test -f "${FILE}"; then
+            echo "verifying archive: ${FILE}"
+            cosign verify --key golang-starter.pub --signature "${FILE}.sig" "${FILE}"
+          else
+            echo "skipping verifying non-existant archive: ${FILE}"
+          fi
+
+  trivy-scan-image:
+    name: trivy-scan-image
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+        with:
+          image-ref: 'ghcr.io/toozej/golang-starter:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  verify_signed_docker_images:
+    runs-on: ubuntu-latest
+    needs: [goreleaser, trivy-scan-image]
+    permissions: {}
+    strategy:
+      matrix:
+        registry: ['', 'ghcr.io/', 'quay.io/']
+        tag: ['latest', 'distroless']
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
+      - name: Get public cosign key for golang-starter project from GitHub
+        run: |
+          curl --silent https://raw.githubusercontent.com/toozej/golang-starter/main/golang-starter.pub -O
+      - name: Verify signatures of Docker images
+        run: |
+          cosign verify --key golang-starter.pub \
+            ${{ matrix.registry }}toozej/golang-starter:${{ matrix.tag }}

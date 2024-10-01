@@ -1,0 +1,8 @@
+# runtime image including CA certs and tzdata
+FROM gcr.io/distroless/static-debian12:latest
+# Copy our static executable.
+COPY golang-starter /go/bin/golang-starter
+# Expose port for publishing as web service
+# EXPOSE 8080
+# Run the binary.
+ENTRYPOINT ["/go/bin/golang-starter"]
