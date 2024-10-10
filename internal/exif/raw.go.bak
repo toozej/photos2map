@@ -1,0 +1,23 @@
+package exif
+
+import (
+	"os"
+
+	"github.com/dsoprea/go-exif/v3"
+)
+
+func ExtractRawEXIF(path string) (float64, float64, error) {
+	rawExifData, err := os.ReadFile(path)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	index := exif.NewTagIndex()
+	_, _, err = exif.SearchAndExtractExifWithReader(index, rawExifData)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	// Replace this with actual extraction logic for raw images
+	return 0, 0, nil // Placeholder, implement actual extraction
+}

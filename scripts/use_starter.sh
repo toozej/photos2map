@@ -13,12 +13,12 @@ function handle_error {
 fetch_credentials() {
     echo "Fetching credentials from 1Password..."
 
-    GITHUB_GHCR_TOKEN=$(op item get "github.com" --field ghcr_token) || handle_error "Failed to fetch GitHub GHCR token."
+    GITHUB_GHCR_TOKEN=$(op item get "github.com" --field ghcr_token --reveal) || handle_error "Failed to fetch GitHub GHCR token."
     DOCKERHUB_USERNAME=$(op item get "docker.com" --field username) || handle_error "Failed to fetch DockerHub username."
-    DOCKERHUB_TOKEN=$(op item get "docker.com" --field token) || handle_error "Failed to fetch DockerHub token."
+    DOCKERHUB_TOKEN=$(op item get "docker.com" --field token --reveal) || handle_error "Failed to fetch DockerHub token."
     QUAY_USERNAME=$(op item get "Quay.io" --field username) || handle_error "Failed to fetch Quay username."
-    QUAY_TOKEN=$(op item get "Quay.io" --field password) || handle_error "Failed to fetch Quay password."
-    SNYK_TOKEN=$(op item get "Snyk" --field password) || handle_error "Failed to fetch Snyk token."
+    QUAY_TOKEN=$(op item get "Quay.io" --field password --reveal) || handle_error "Failed to fetch Quay password."
+    SNYK_TOKEN=$(op item get "Snyk" --field password --reveal) || handle_error "Failed to fetch Snyk token."
 
     # Write environment variables to .env file
     cat <<EOF >> .env
@@ -117,10 +117,11 @@ store_in_1password() {
 
     # Update the 1Password item with generated secrets
     op item edit "${NEW_PROJECT_NAME}" \
-        --field "Cosign Passphrase"="${COSIGN_PASSPHRASE}" \
-        --field "GH PAT"="${GITHUB_TOKEN}" \
-        --file "${NEW_PROJECT_NAME}.key" \
-        --file "${NEW_PROJECT_NAME}.pub" || handle_error "Failed to update 1Password item with secrets."
+        "Cosign.Passphrase[password]=${COSIGN_PASSPHRASE}" \
+        "Cosign.Private Key[file]=${NEW_PROJECT_NAME}.key" \
+        "Cosign.Public Key[file]=${NEW_PROJECT_NAME}.pub" \
+        "GH PAT[password]=${GITHUB_TOKEN}" \
+        || handle_error "Failed to update 1Password item with secrets."
 
     echo "Secrets successfully stored in 1Password."
 }
@@ -132,7 +133,7 @@ if [[ $# -lt 1 ]]; then
     handle_error "Usage: $0 <new_project_name> [github_username]"
 fi
 
-OLD_PROJECT_NAME="golang-starter"
+OLD_PROJECT_NAME="photos2map"
 NEW_PROJECT_NAME="${1}"
 GITHUB_USERNAME="${2:-toozej}"
 
@@ -149,7 +150,7 @@ EOF
 echo "Updating project from ${OLD_PROJECT_NAME} to ${NEW_PROJECT_NAME}..."
 
 # Truncate existing CREDITS.md file and replace its contents with link to template repo's CREDITS.md file
-echo -e "# Credits and Acknowledgements\n\n- https://raw.githubusercontent.com/toozej/golang-starter/main/CREDITS.md" > CREDITS.md
+echo -e "# Credits and Acknowledgements\n\n- https://raw.githubusercontent.com/toozej/photos2map/main/CREDITS.md" > CREDITS.md
 
 # Remove old public key if it exists
 rm -f "./${OLD_PROJECT_NAME}.pub" || handle_error "Failed to remove ${OLD_PROJECT_NAME}.pub"
@@ -162,7 +163,7 @@ go mod edit -module=github.com/${GITHUB_USERNAME}/${NEW_PROJECT_NAME} || handle_
 mv "cmd/${OLD_PROJECT_NAME}" "cmd/${NEW_PROJECT_NAME}" || handle_error "Failed to move project directories."
 
 # Replace old project name with the new project name across files
-grep --exclude-dir=.git -rl "${OLD_PROJECT_NAME}" . | xargs sed -i "" -e "s/${OLD_PROJECT_NAME}/${NEW_PROJECT_NAME}/g" || handle_error "Failed to rename instances of ${OLD_PROJECT_NAME} to ${NEW_PROJECT_NAME}."
+grep --exclude-dir=.git -rl "${OLD_PROJECT_NAME}" . | xargs sed -i -e "s/${OLD_PROJECT_NAME}/${NEW_PROJECT_NAME}/g" || handle_error "Failed to rename instances of ${OLD_PROJECT_NAME} to ${NEW_PROJECT_NAME}."
 
 # Show git diff to allow verification of changes
 git diff || handle_error "Failed to show git diff."

@@ -12,7 +12,7 @@ import (
 func NewManCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "man",
-		Short:                 "Generates golang-starter's command line manpages",
+		Short:                 "Generates photos2map's command line manpages",
 		SilenceUsage:          true,
 		DisableFlagsInUseLine: true,
 		Hidden:                true,

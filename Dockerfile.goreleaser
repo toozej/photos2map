@@ -1,6 +1,6 @@
 # runtime image
 FROM scratch
 # Copy our static executable.
-COPY golang-starter /go/bin/golang-starter
+COPY photos2map /go/bin/photos2map
 # Run the binary.
-ENTRYPOINT ["/go/bin/golang-starter"]
+ENTRYPOINT ["/go/bin/photos2map"]

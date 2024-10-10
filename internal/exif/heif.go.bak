@@ -1,0 +1,50 @@
+package exif
+
+import (
+	"github.com/rwcarlsen/goexif/exif"
+)
+
+func ExtractHEIFEXIF(path string) (float64, float64, error) {
+	ctx, err := NewContext()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	if err := ctx.ReadFromFile(path); err != nil {
+		return 0, 0, err
+	}
+
+	primary, err := ctx.PrimaryImage()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	meta, err := primary.Metadata("Exif")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	x, err := exif.Decode(meta)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	lat, lon, err := heifGetGPSCoordinates(x)
+	return lat, lon, err
+}
+
+func heifGetGPSCoordinates(x *exif.Exif) (lat, lon float64, err error) {
+	gpsLat, err := x.Get(exif.GPSLatitude)
+	if err != nil {
+		return 0, 0, err
+	}
+	gpsLong, err := x.Get(exif.GPSLongitude)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	lat, _ = gpsLat.Rat2(0)
+	lon, _ = gpsLong.Rat2(0)
+
+	return lat, lon, nil
+}

@@ -1,9 +1,9 @@
 ---
 version: "3"
 services:
-  golang-starter:
-    container_name: golang-starter
-    image: toozej/golang-starter:latest
+  photos2map:
+    container_name: photos2map
+    image: toozej/photos2map:latest
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -12,11 +12,11 @@ services:
       - "traefik.enable=false"
       # labels below for publishing as web service
       # - "traefik.docker.network=traefik"
-      # - "traefik.http.routers.golang-starter.rule=Host(`golang-starter.test`)"
-      # - "traefik.http.routers.golang-starter.middlewares=http-redirect-https@file,headers@file"
-      # - "traefik.http.routers.golang-starter-secure.entrypoints=https"
-      # - "traefik.http.routers.golang-starter-secure.rule=Host(`golang-starter.test`)"
-      # - "traefik.http.routers.golang-starter-secure.middlewares=headers@file"
-      # - "traefik.http.routers.golang-starter-secure.tls=true"
+      # - "traefik.http.routers.photos2map.rule=Host(`photos2map.test`)"
+      # - "traefik.http.routers.photos2map.middlewares=http-redirect-https@file,headers@file"
+      # - "traefik.http.routers.photos2map-secure.entrypoints=https"
+      # - "traefik.http.routers.photos2map-secure.rule=Host(`photos2map.test`)"
+      # - "traefik.http.routers.photos2map-secure.middlewares=headers@file"
+      # - "traefik.http.routers.photos2map-secure.tls=true"
     # networks:
       # - traefik

@@ -1,7 +1,7 @@
 # setup project and deps
 FROM golang:1.23-bullseye AS init
 
-WORKDIR /go/golang-starter/
+WORKDIR /go/photos2map/
 
 COPY go.mod* go.sum* ./
 RUN go mod download
@@ -26,6 +26,6 @@ RUN CGO_ENABLED=0 go build -ldflags="${LDFLAGS}"
 # runtime image
 FROM scratch
 # Copy our static executable.
-COPY --from=build /go/golang-starter/golang-starter /go/bin/golang-starter
+COPY --from=build /go/photos2map/photos2map /go/bin/photos2map
 # Run the binary.
-ENTRYPOINT ["/go/bin/golang-starter"]
+ENTRYPOINT ["/go/bin/photos2map"]

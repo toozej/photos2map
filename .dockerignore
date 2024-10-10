@@ -14,5 +14,7 @@ checkmake.ini
 Makefile
 Dockerfile*
 docker-compose.yml
-golang-starter
-golang-starter.key
+photos2map
+photos2map.key
+in/
+out/

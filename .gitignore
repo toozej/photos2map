@@ -1,5 +1,5 @@
 # Cosign
-golang-starter.key
+photos2map.key
 cosign.key
 *.sig
 
@@ -12,7 +12,6 @@ cosign.key
 *.dll
 *.so
 *.dylib
-out/
 
 # Test binary, built with `go test -c`
 *.test
@@ -28,3 +27,8 @@ completions/
 manpages/
 docs/
 dist/
+
+# Input and output directories
+in/
+./out/
+out/photos2map

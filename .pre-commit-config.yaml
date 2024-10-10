@@ -4,7 +4,7 @@ minimum_pre_commit_version: "1.15"
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-yaml
         name: Check for valid YAML syntax in repo
@@ -59,6 +59,7 @@ repos:
       - id: go-sec-mod
       - id: go-staticcheck-mod
       - id: go-critic
+        args: ["-disable=sloppyTypeAssert"]
       # disabled until https://github.com/orijtech/structslop/pull/63 is merged
       # - id: go-structslop-mod
       - id: go-fmt
@@ -74,7 +75,7 @@ repos:
 
   # lint Dockerfile
   - repo: https://github.com/hadolint/hadolint
-    rev: v2.13.0-beta
+    rev: v2.13.1-beta
     hooks:
       - id: hadolint-docker
         args: ["--ignore", "DL3007"]
