@@ -13,11 +13,11 @@ if [[ ! -f .env ]]; then
 fi
 
 # Source .env file's environment variables
-#export "$(xargs < .env)"
+export "$(xargs < .env)"
 
 # Read GitHub username and token from the environment
 GITHUB_USERNAME="${GITHUB_USERNAME:-}"
-GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+GITHUB_TOKEN="${GH_TOKEN:-}"
 
 if [[ -z "$GITHUB_USERNAME" || -z "$GITHUB_TOKEN" ]]; then
     handle_error "GITHUB_USERNAME or GITHUB_TOKEN is not set in the environment. Please set them in .env."
@@ -28,25 +28,6 @@ upload_secrets_to_github() {
     echo "Pushing .env entries to GitHub Actions secrets for repo: $GITHUB_USERNAME/$REPO_NAME..."
     gh secret set --repo "$GITHUB_USERNAME"/"$REPO_NAME" --app actions --env-file .env
     gh secret set COSIGN_PRIVATE_KEY --repo "$GITHUB_USERNAME"/"$REPO_NAME" --app actions < "$REPO_NAME.key"
-    # go get github.com/jamesruan/sodium
-
-    # while IFS='=' read -r key value; do
-    #     if [[ "$key" != "" ]]; then
-    #         enc_value=$(go run ./scripts/encrypt_secret_for_github.go "$GITHUB_USERNAME" "$REPO_NAME" "$value")
-
-
-    #         response=$(curl -s -X PUT \
-    #           -H "Accept: application/vnd.github+json" \
-    #           -H "Authorization: Bearer $GITHUB_TOKEN" \
-    #           -H "X-GitHub-Api-Version: 2022-11-28" \
-    #           -d "{\"encrypted_value\":\"$enc_value\",\"key_id\":\"$key\"}" \
-    #           "https://api.github.com/repos/$GITHUB_USERNAME/$REPO_NAME/actions/secrets/$key")
-
-    #         if [[ "$response" == *"errors"* ]]; then
-    #             handle_error "Failed to set secret $key in GitHub Actions. Response: $response"
-    #         fi
-    #     fi
-    # done < .env
     echo "Secrets successfully uploaded to GitHub Actions."
 }
 
