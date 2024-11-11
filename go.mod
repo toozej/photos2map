@@ -5,7 +5,7 @@ go 1.23
 require github.com/spf13/viper v1.19.0
 
 require (
-	github.com/go-echarts/go-echarts/v2 v2.4.4
+	github.com/go-echarts/go-echarts/v2 v2.4.5
 	github.com/muesli/mango-cobra v1.2.0
 	github.com/muesli/roff v0.1.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
