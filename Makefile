@@ -33,7 +33,7 @@ else
 	OPENER=open
 endif
 
-.PHONY: all vet test build verify run up down distroless-build distroless-run local local-vet local-test local-cover local-run local-release-test local-release local-sign local-verify local-release-verify install get-cosign-pub-key docker-login pre-commit-install pre-commit-run pre-commit pre-reqs update-golang-version docs docs-generate docs-serve clean help
+.PHONY: all vet test build verify run up down distroless-build distroless-run local local-vet local-test local-cover local-run local-bulk-run local-release-test local-release local-sign local-verify local-release-verify install get-cosign-pub-key docker-login pre-commit-install pre-commit-run pre-commit pre-reqs update-golang-version docs docs-generate docs-serve clean help
 
 all: vet pre-commit clean test build verify run ## Run default workflow via Docker
 local: local-update-deps local-vendor local-vet pre-commit clean local-test local-cover local-build local-sign local-verify local-run ## Run default workflow using locally installed Golang toolchain
@@ -94,6 +94,13 @@ local-build: ## Run `go build` using locally installed golang toolchain
 
 local-run: ## Run locally built binary
 	$(CURDIR)/out/photos2map --dir $(CURDIR)/in/ --output gpx
+
+local-bulk-run: ## Run locally built binary against all input sub-directories
+	@for dir in $(shell find $(CURDIR)/in -mindepth 1 -maxdepth 1 -type d); do \
+		subdir=$$(basename $$dir); \
+		$(CURDIR)/out/photos2map --dir $(CURDIR)/in/$$subdir/ --output gpx; \
+		mv $(CURDIR)/out/output.gpx $(CURDIR)/in/$$subdir/$$subdir.gpx; \
+	done
 
 local-release-test: ## Build assets and test goreleaser config using locally installed golang toolchain and goreleaser
 	goreleaser check
