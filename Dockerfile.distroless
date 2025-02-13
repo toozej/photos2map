@@ -1,5 +1,5 @@
 # setup project and deps
-FROM golang:1.23-bullseye AS init
+FROM golang:1.24-bullseye AS init
 
 WORKDIR /go/photos2map/
 
