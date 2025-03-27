@@ -6,7 +6,7 @@ if ! command -v go; then
     exit 1
 fi
 
-OLD_GOLANG_VERSION="1.23"
+OLD_GOLANG_VERSION="1.24"
 NEW_GOLANG_VERSION="${1}"
 GIT_REPO_ROOT=$(git rev-parse --show-toplevel)
 FILES_NEEDING_UPDATES="${GIT_REPO_ROOT}/Dockerfile* ${GIT_REPO_ROOT}/README.md ${GIT_REPO_ROOT}/scripts/update_golang_version.sh ${GIT_REPO_ROOT}/.github/workflows/*"
