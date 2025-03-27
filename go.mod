@@ -2,7 +2,7 @@ module github.com/toozej/photos2map
 
 go 1.23
 
-require github.com/spf13/viper v1.20.0
+require github.com/spf13/viper v1.20.1
 
 require (
 	github.com/go-echarts/go-echarts/v2 v2.5.2
