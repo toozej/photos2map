@@ -182,8 +182,7 @@ pre-commit-run: ## Run pre-commit hooks against all files
 
 update-golang-version: ## Update to latest Golang version across the repo
 	@VERSION=`curl -s "https://go.dev/dl/?mode=json" | jq -r '.[0].version' | sed 's/go//' | cut -d '.' -f 1,2`; \
-	echo "Updating Golang to $$VERSION"; \
-	./scripts/update_golang_version.sh $$VERSION
+	$(CURDIR)/scripts/update_golang_version.sh $$VERSION
 
 docs: docs-generate docs-serve ## Generate and serve documentation
 
