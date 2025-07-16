@@ -5,7 +5,7 @@ go 1.24
 require github.com/spf13/viper v1.20.1
 
 require (
-	github.com/go-echarts/go-echarts/v2 v2.6.0
+	github.com/go-echarts/go-echarts/v2 v2.6.1
 	github.com/muesli/mango-cobra v1.2.0
 	github.com/muesli/roff v0.1.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
@@ -17,7 +17,7 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/go-viper/mapstructure/v2 v2.3.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/muesli/mango v0.2.0 // indirect
 	github.com/muesli/mango-pflag v0.1.0 // indirect
