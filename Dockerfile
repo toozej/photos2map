@@ -1,5 +1,5 @@
 # setup project and deps
-FROM golang:1.24-bookworm AS init
+FROM golang:1.25-bookworm AS init
 
 WORKDIR /go/photos2map/
 
