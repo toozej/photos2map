@@ -5,7 +5,7 @@ go 1.25
 require github.com/spf13/viper v1.20.1
 
 require (
-	github.com/go-echarts/go-echarts/v2 v2.6.1
+	github.com/go-echarts/go-echarts/v2 v2.6.2
 	github.com/muesli/mango-cobra v1.2.0
 	github.com/muesli/roff v0.1.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
@@ -29,7 +29,6 @@ require (
 	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twpayne/go-geom v1.6.1 // indirect
-	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
