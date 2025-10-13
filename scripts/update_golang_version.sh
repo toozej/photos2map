@@ -23,7 +23,7 @@ fi
 OLD_GOLANG_VERSION=$(grep -E "^go " go.mod | awk '{print $2}')
 NEW_GOLANG_VERSION="${1}"
 GIT_REPO_ROOT=$(git rev-parse --show-toplevel)
-FILES_NEEDING_UPDATES="${GIT_REPO_ROOT}/Dockerfile ${GIT_REPO_ROOT}/Dockerfile.docs ${GIT_REPO_ROOT}/Dockerfile.distroless ${GIT_REPO_ROOT}/.github/workflows/cicd.yaml"
+FILES_NEEDING_UPDATES="${GIT_REPO_ROOT}/Dockerfile ${GIT_REPO_ROOT}/Dockerfile.distroless ${GIT_REPO_ROOT}/.github/workflows/cicd.yaml"
 
 if [[ "${OLD_GOLANG_VERSION}" == "${NEW_GOLANG_VERSION}" ]]; then
     echo "No update needed, already on latest Golang version ${NEW_GOLANG_VERSION}"

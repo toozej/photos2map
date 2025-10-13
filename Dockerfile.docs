@@ -1,6 +1,0 @@
-FROM golang:1.25-bookworm
-
-RUN go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
-
-# Run the binary.
-ENTRYPOINT ["/go/bin/gomarkdoc", "--output", "/docs/docs.md", "/package/pkg/...", "/package/internal/...", "/package/cmd/..."]

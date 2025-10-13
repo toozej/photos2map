@@ -66,6 +66,7 @@ repos:
       - id: go-imports
       - id: golangci-lint-mod
       - id: go-test-mod
+        args: [-race]
 
   # run shellcheck on Bash scripts
   - repo: https://github.com/koalaman/shellcheck-precommit
@@ -78,7 +79,7 @@ repos:
     rev: v2.14.0
     hooks:
       - id: hadolint-docker
-        args: ["--ignore", "DL3007"]
+        args: ["--ignore", "DL3007", "--ignore", "DL3008", "--ignore", "DL3013"]
 
   # lint Makefile
   - repo: https://github.com/mrtazz/checkmake/

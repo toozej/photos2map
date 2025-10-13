@@ -1,7 +1,8 @@
 # runtime image including CA certs and tzdata
 FROM gcr.io/distroless/static-debian12:latest
 # Copy our static executable.
-COPY photos2map /go/bin/photos2map
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/photos2map /go/bin/photos2map
 # Expose port for publishing as web service
 # EXPOSE 8080
 # Run the binary.

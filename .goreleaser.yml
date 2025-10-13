@@ -33,6 +33,9 @@ builds:
       - arm64
     goarm:
       - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
     mod_timestamp: '{{ .CommitTimestamp }}'
     flags:
       - -trimpath
@@ -76,142 +79,88 @@ changelog:
     - title: Other work
       order: 9999
 
-dockers:
-  - image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-amd64'
+dockers_v2:
+  - id: photos2map
+    images:
+      - 'toozej/photos2map'
+      - 'ghcr.io/toozej/photos2map'
+      - 'quay.io/toozej/photos2map'
+    tags:
+      - "v{{ .Version }}"
+      - "{{ .Version }}"
+      - "latest"
     dockerfile: Dockerfile.goreleaser
-    use: buildx
-    build_flag_templates:
-      - "--pull"
-      - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
-      - "--label=io.artifacthub.package.maintainers=[{\"name\":\"toozej\"}]"
-      - "--label=io.artifacthub.package.license=GPLv3"
-      - "--label=org.opencontainers.image.description=Golang starter template"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
-      - "--platform=linux/amd64"
+    labels:
+      "io.artifacthub.package.readme-url": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "io.artifacthub.package.maintainers": "[{\"name\":\"toozej\"}]"
+      "io.artifacthub.package.license": "GPLv3"
+      "org.opencontainers.image.description": "Generates a map on a HTML page or GPX file\
+        \ from GPS coordinates in images"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+      "org.opencontainers.image.authors": "James Tooze https://github.com/toozej/"
+      "org.opencontainers.image.documentation": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "org.opencontainers.image.licenses": "GPL-3.0-only"
+      "org.opencontainers.image.title": "{{.ProjectName}}"
+      "org.opencontainers.image.vendor": "James Tooze"
+    annotations:
+      "index,manifest:org.opencontainers.image.authors": "James Tooze https://github.com/toozej/"
+      "index,manifest:org.opencontainers.image.created": "{{.Date}}"
+      "index,manifest:org.opencontainers.image.description": "Generates a map on a HTML page\
+        \ or GPX file from GPS coordinates in images"
+      "index,manifest:org.opencontainers.image.documentation": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "index,manifest:org.opencontainers.image.licenses": "GPL-3.0-only"
+      "index,manifest:org.opencontainers.image.revision": "{{.FullCommit}}"
+      "index,manifest:org.opencontainers.image.source": "https://github.com/toozej/photos2map"
+      "index,manifest:org.opencontainers.image.title": "{{.ProjectName}}"
+      "index,manifest:org.opencontainers.image.vendor": "James Tooze"
+      "index,manifest:org.opencontainers.image.version": "{{.Version}}"
     extra_files:
       - scripts/goreleaser_entrypoint.sh
-  - image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-arm64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-arm64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-arm64'
-    dockerfile: Dockerfile.goreleaser
-    use: buildx
-    build_flag_templates:
-      - "--pull"
-      - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
-      - "--label=io.artifacthub.package.maintainers=[{\"name\":\"toozej\"}]"
-      - "--label=io.artifacthub.package.license=GPLv3"
-      - "--label=org.opencontainers.image.description=Golang starter template"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
-      - "--platform=linux/arm64"
-    goarch: arm64
-    extra_files:
-      - scripts/goreleaser_entrypoint.sh
-  - image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
+  - id: photos2map-distroless
+    images:
+      - 'toozej/photos2map'
+      - 'ghcr.io/toozej/photos2map'
+      - 'quay.io/toozej/photos2map'
+    tags:
+      - "v{{ .Version }}-distroless"
+      - "{{ .Version }}-distroless"
+      - "distroless"
     dockerfile: Dockerfile.goreleaser.distroless
-    use: buildx
-    build_flag_templates:
-      - "--pull"
-      - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
-      - "--label=io.artifacthub.package.maintainers=[{\"name\":\"toozej\"}]"
-      - "--label=io.artifacthub.package.license=GPLv3"
-      - "--label=org.opencontainers.image.description=Golang starter template"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
-      - "--platform=linux/amd64"
-    extra_files:
-      - scripts/goreleaser_entrypoint.sh
-  - image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-distroless-arm64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
-    dockerfile: Dockerfile.goreleaser.distroless
-    use: buildx
-    build_flag_templates:
-      - "--pull"
-      - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
-      - "--label=io.artifacthub.package.maintainers=[{\"name\":\"toozej\"}]"
-      - "--label=io.artifacthub.package.license=GPLv3"
-      - "--label=org.opencontainers.image.description=Golang starter template"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
-      - "--platform=linux/arm64"
-    goarch: arm64
+    labels:
+      "io.artifacthub.package.readme-url": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "io.artifacthub.package.maintainers": "[{\"name\":\"toozej\"}]"
+      "io.artifacthub.package.license": "GPLv3"
+      "org.opencontainers.image.description": "Generates a map on a HTML page or GPX file\
+        \ from GPS coordinates in images"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+      "org.opencontainers.image.authors": "James Tooze https://github.com/toozej/"
+      "org.opencontainers.image.documentation": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "org.opencontainers.image.licenses": "GPL-3.0-only"
+      "org.opencontainers.image.title": "{{.ProjectName}}"
+      "org.opencontainers.image.vendor": "James Tooze"
+    annotations:
+      "index,manifest:org.opencontainers.image.authors": "James Tooze https://github.com/toozej/"
+      "index,manifest:org.opencontainers.image.created": "{{.Date}}"
+      "index,manifest:org.opencontainers.image.description": "Generates a map on a HTML page\
+        \ or GPX file from GPS coordinates in images"
+      "index,manifest:org.opencontainers.image.documentation": "https://raw.githubusercontent.com/toozej/photos2map/main/README.md"
+      "index,manifest:org.opencontainers.image.licenses": "GPL-3.0-only"
+      "index,manifest:org.opencontainers.image.revision": "{{.FullCommit}}"
+      "index,manifest:org.opencontainers.image.source": "https://github.com/toozej/photos2map"
+      "index,manifest:org.opencontainers.image.title": "{{.ProjectName}}"
+      "index,manifest:org.opencontainers.image.vendor": "James Tooze"
+      "index,manifest:org.opencontainers.image.version": "{{.Version}}"
     extra_files:
       - scripts/goreleaser_entrypoint.sh
 
-docker_manifests:
-  # tagged
-  - name_template: 'toozej/photos2map:{{ .Tag }}'
-    image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-amd64'
-      - 'toozej/photos2map:{{ .Tag }}-arm64'
-  - name_template: 'ghcr.io/toozej/photos2map:{{ .Tag }}'
-    image_templates:
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-arm64'
-  - name_template: 'quay.io/toozej/photos2map:{{ .Tag }}'
-    image_templates:
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-arm64'
-  - name_template: 'toozej/photos2map:{{ .Tag }}-distroless'
-    image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'toozej/photos2map:{{ .Tag }}-distroless-arm64'
-  - name_template: 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless'
-    image_templates:
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
-  - name_template: 'quay.io/toozej/photos2map:{{ .Tag }}-distroless'
-    image_templates:
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
-  # latest
-  - name_template: 'toozej/photos2map:latest'
-    image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-amd64'
-      - 'toozej/photos2map:{{ .Tag }}-arm64'
-  - name_template: 'ghcr.io/toozej/photos2map:latest'
-    image_templates:
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-arm64'
-  - name_template: 'quay.io/toozej/photos2map:latest'
-    image_templates:
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-arm64'
-  # distroless
-  - name_template: 'toozej/photos2map:distroless'
-    image_templates:
-      - 'toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'toozej/photos2map:{{ .Tag }}-distroless-arm64'
-  - name_template: 'ghcr.io/toozej/photos2map:distroless'
-    image_templates:
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'ghcr.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
-  - name_template: 'quay.io/toozej/photos2map:distroless'
-    image_templates:
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-amd64'
-      - 'quay.io/toozej/photos2map:{{ .Tag }}-distroless-arm64'
 
 archives:
   - name_template: >-
@@ -273,6 +222,30 @@ nfpms:
       lintian_overrides:
         - statically-linked-binary
         - changelog-file-missing-in-native-package
+
+homebrew_casks:
+  - name: photos2map
+    homepage: https://github.com/toozej/photos2map
+    description: "Generates a map on a HTML page or GPX file from GPS coordinates in images"
+    license: GPLv3
+    repository:
+      owner: toozej
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    manpages:
+      - "man/photos2map.1.gz"
+    completions:
+      bash: "completions/photos2map.bash"
+      zsh: "completions/photos2map.zsh"
+      fish: "completions/photos2map.fish"
+    url:
+      verified: "github.com/toozej/photos2map/releases/download"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/photos2map"]
+          end
 
 sboms:
   - artifacts: archive

@@ -1,11 +1,14 @@
 .git
 .github
+.kiro
+.kilocode
 .gitignore
 .pre-commit-config.yaml
 c.out
 completions
 docs
 manpages
+profiles
 vendor
 LICENSE
 CREDITS.md

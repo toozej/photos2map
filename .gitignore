@@ -25,10 +25,15 @@ vendor/
 # Generated directories
 completions/
 manpages/
-docs/
 dist/
+docs/diagrams/go-diagrams/
+profiles/
+
+# AI assistant configuration
+.kiro/
+.kilocode/
 
 # Input and output directories
 in/
 ./out/
-out/photos2map
+out/
