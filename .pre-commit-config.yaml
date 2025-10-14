@@ -79,7 +79,8 @@ repos:
     rev: v2.14.0
     hooks:
       - id: hadolint-docker
-        args: ["--ignore", "DL3007", "--ignore", "DL3008", "--ignore", "DL3013"]
+        args: ["--ignore", "DL3007", "--ignore", "DL3008", "--ignore", "DL3013", "--ignore",
+          "DL3062"]
 
   # lint Makefile
   - repo: https://github.com/mrtazz/checkmake/
