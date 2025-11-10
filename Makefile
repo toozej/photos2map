@@ -185,7 +185,7 @@ pre-commit-install: ## Install pre-commit hooks and necessary binaries
 	# staticcheck
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 	# go-critic
-	go install github.com/go-critic/go-critic/cmd/gocritic@latest
+	go install github.com/go-critic/go-critic/cmd/go-critic@latest
 	# structslop
 	# go install github.com/orijtech/structslop/cmd/structslop@latest
 	# shellcheck
