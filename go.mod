@@ -11,7 +11,7 @@ require (
 	github.com/muesli/roff v0.1.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/twpayne/go-gpx v1.5.0
 )
 
