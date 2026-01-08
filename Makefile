@@ -191,7 +191,7 @@ pre-commit-install: ## Install pre-commit hooks and necessary binaries
 	# shellcheck
 	command -v shellcheck || brew install shellcheck || apt install -y shellcheck || sudo dnf install -y ShellCheck || sudo apt install -y shellcheck
 	# checkmake
-	go install github.com/checkmake/checkmake/cmd/checkmake@main
+	go install github.com/checkmake/checkmake/cmd/checkmake@latest
 	# goreleaser
 	go install github.com/goreleaser/goreleaser/v2@latest
 	# syft
