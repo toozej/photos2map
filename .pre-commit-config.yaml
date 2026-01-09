@@ -84,7 +84,7 @@ repos:
 
   # lint Makefile
   - repo: https://github.com/checkmake/checkmake/
-    rev: 0.2.2
+    rev: v0.3.0
     hooks:
       - id: checkmake
         files: Makefile
