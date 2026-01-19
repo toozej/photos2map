@@ -233,7 +233,7 @@ homebrew_casks:
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     manpages:
-      - "man/photos2map.1.gz"
+      - "manpages/photos2map.1.gz"
     completions:
       bash: "completions/photos2map.bash"
       zsh: "completions/photos2map.zsh"
