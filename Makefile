@@ -194,6 +194,8 @@ pre-commit-install: ## Install pre-commit hooks and necessary binaries
 	go install github.com/checkmake/checkmake/cmd/checkmake@latest
 	# goreleaser
 	go install github.com/goreleaser/goreleaser/v2@latest
+	# actionlint
+	command -v actionlint || brew install actionlint || go install github.com/rhysd/actionlint/cmd/actionlint@latest
 	# syft
 	command -v syft || curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 	# cosign
