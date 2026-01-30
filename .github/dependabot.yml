@@ -5,8 +5,9 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "08:00"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
     commit-message:
@@ -15,8 +16,9 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "08:00"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
     commit-message:
@@ -25,8 +27,9 @@ updates:
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "08:00"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
     commit-message:
