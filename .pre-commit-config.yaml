@@ -102,7 +102,7 @@ repos:
       - id: goreleaser-check
 
   # run semgrep on all known filetypes
-  - repo: https://github.com/returntocorp/semgrep
+  - repo: https://github.com/semgrep/pre-commit
     rev: 'v1.89.0'
     hooks:
       - id: semgrep
