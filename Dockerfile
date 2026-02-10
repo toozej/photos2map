@@ -31,4 +31,5 @@ FROM scratch
 # Copy our static executable.
 COPY --from=build /go/photos2map/photos2map /go/bin/photos2map
 # Run the binary.
+USER non-root
 ENTRYPOINT ["/go/bin/photos2map"]
