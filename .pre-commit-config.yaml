@@ -91,7 +91,7 @@ repos:
 
   # lint GitHub Actions workflows
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.10
+    rev: v1.7.11
     hooks:
       - id: actionlint
 
