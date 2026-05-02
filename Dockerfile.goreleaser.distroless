@@ -1,5 +1,5 @@
 # runtime image including CA certs and tzdata
-FROM gcr.io/distroless/static-debian12:latest
+FROM gcr.io/distroless/static-debian13:nonroot
 # Copy our static executable.
 ARG TARGETPLATFORM
 COPY $TARGETPLATFORM/photos2map /go/bin/photos2map
