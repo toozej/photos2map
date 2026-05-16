@@ -53,13 +53,19 @@ local-release-verify: local-release local-sign local-verify ## Release and verif
 pre-reqs: pre-commit-install ## Install pre-commit hooks and necessary binaries
 
 vet: ## Run `go vet` in Docker
-	docker build --target vet -f $(CURDIR)/Dockerfile -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) . 
+	docker build --target vet -f $(CURDIR)/Dockerfile -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) .
 
 test: ## Run `go test` with race detection in Docker
-	docker build --progress=plain --target test -f $(CURDIR)/Dockerfile -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) . 
+	docker build --progress=plain --target test -f $(CURDIR)/Dockerfile -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) .
 
 build: ## Build Docker image, including running tests
-	docker build -f $(CURDIR)/Dockerfile -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) .
+	docker build -f $(CURDIR)/Dockerfile \
+		--build-arg VERSION=$(or $(VERSION),unknown) \
+		--build-arg COMMIT=$(or $(COMMIT),unknown) \
+		--build-arg BRANCH=$(or $(BRANCH),unknown) \
+		--build-arg BUILT_AT=$(NOW) \
+		--build-arg BUILDER=$(BUILDER) \
+		-t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG) .
 
 get-cosign-pub-key: ## Get photos2map Cosign public key from GitHub
 	test -f $(CURDIR)/photos2map.pub || curl --silent https://raw.githubusercontent.com/toozej/photos2map/main/photos2map.pub -O
@@ -80,7 +86,13 @@ down: ## Stop running Docker Compose project
 	docker compose -f docker-compose.yml down --remove-orphans
 
 distroless-build: ## Build Docker image using distroless as final base
-	docker build -f $(CURDIR)/Dockerfile.distroless -t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)-distroless . 
+	docker build -f $(CURDIR)/Dockerfile.distroless \
+		--build-arg VERSION=$(or $(VERSION),unknown) \
+		--build-arg COMMIT=$(or $(COMMIT),unknown) \
+		--build-arg BRANCH=$(or $(BRANCH),unknown) \
+		--build-arg BUILT_AT=$(NOW) \
+		--build-arg BUILDER=$(BUILDER) \
+		-t $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)-distroless .
 
 distroless-run: ## Run built Docker image using distroless as final base
 	docker run --rm --name photos2map -v $(CURDIR)/config:/config $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)-distroless
@@ -300,7 +312,6 @@ clean: ## Remove any locally compiled binaries, profiles, demo output, and built
 	@rm -rf $(CURDIR)/manpages/
 	@rm -rf $(CURDIR)/completions/
 	-docker image rm $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)
-	-docker image rm $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)-distroless
 
 help: ## Display help text
 	@grep -E '^[a-zA-Z_-]+ ?:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

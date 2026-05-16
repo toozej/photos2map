@@ -40,8 +40,9 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate
-        }} -X main.builtBy=goreleaser
+      - -s -w -X github.com/toozej/photos2map/pkg/version.Version={{.Version}} -X github.com/toozej/photos2map/pkg/version.Commit={{.Commit}}
+        -X github.com/toozej/photos2map/pkg/version.Branch={{.Branch}} -X github.com/toozej/photos2map/pkg/version.BuiltAt={{
+        .CommitDate }} -X github.com/toozej/photos2map/pkg/version.Builder=goreleaser
     main: ./
     binary: photos2map
 
@@ -256,14 +257,13 @@ sboms:
 
 signs:
   - cmd: cosign
-    stdin: '{{ .Env.COSIGN_PASSWORD }}'
     output: true
+    signature: "${artifact}.sigstore.json"
     args:
       - 'sign-blob'
-      - '--key=env://COSIGN_PRIVATE_KEY'
-      - '--yes'
-      - '--output-signature=${signature}'
+      - '--bundle=${signature}'
       - '${artifact}'
+      - '--yes'
     artifacts: all
 
 docker_signs:

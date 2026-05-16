@@ -1,0 +1,41 @@
+---
+name: Update Major Version
+run-name: >-
+  Move major tag for ${{ github.event.release.tag_name }}
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    if: >-
+      !github.event.release.prerelease
+      && startsWith(github.event.release.tag_name, 'v')
+    permissions:
+      contents: write
+    steps:
+      - name: Parse major version from release tag
+        id: parse
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$TAG' is not a valid semver release tag. Skipping."
+            exit 1
+          fi
+          MAJOR="v$(echo "$TAG" | cut -d. -f1 | tr -d 'v')"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+          echo "Parsed major version: $MAJOR from tag: $TAG"
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Git config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Tag new target
+        run: git tag -f "${{ steps.parse.outputs.major }}" "${{ github.event.release.tag_name
+          }}"
+      - name: Push new tag
+        run: git push origin "${{ steps.parse.outputs.major }}" --force
