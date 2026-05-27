@@ -1,5 +1,4 @@
 ---
-version: "3"
 services:
   photos2map:
     container_name: photos2map

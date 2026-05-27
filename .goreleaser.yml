@@ -40,9 +40,13 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X github.com/toozej/photos2map/pkg/version.Version={{.Version}} -X github.com/toozej/photos2map/pkg/version.Commit={{.Commit}}
-        -X github.com/toozej/photos2map/pkg/version.Branch={{.Branch}} -X github.com/toozej/photos2map/pkg/version.BuiltAt={{
-        .CommitDate }} -X github.com/toozej/photos2map/pkg/version.Builder=goreleaser
+      - >-
+        -s -w
+        -X github.com/toozej/photos2map/pkg/version.Version={{.Version}}
+        -X github.com/toozej/photos2map/pkg/version.Commit={{.Commit}}
+        -X github.com/toozej/photos2map/pkg/version.Branch={{.Branch}}
+        -X github.com/toozej/photos2map/pkg/version.BuiltAt={{.CommitDate}}
+        -X github.com/toozej/photos2map/pkg/version.Builder=goreleaser
     main: ./
     binary: photos2map
 

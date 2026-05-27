@@ -33,6 +33,11 @@ profiles/
 .kiro/
 .kilocode/
 
+# Temporary files
+prompt.txt
+prompt.md
+TASKS.md
+
 # Input and output directories
 in/
 ./out/
