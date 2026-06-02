@@ -1,5 +1,5 @@
 # setup project and deps
-FROM golang:1.26-trixie AS init
+FROM golang:1.26.3-trixie AS init
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
