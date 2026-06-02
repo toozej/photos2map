@@ -164,10 +164,9 @@ jobs:
     steps:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v4.1.2 # nosemgrep: yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha
-      - name: Get public cosign key for photos2map project from GitHub
-        run: |
-          curl --silent https://raw.githubusercontent.com/toozej/photos2map/main/photos2map.pub -O
       - name: Verify signatures of Docker images
         run: |
-          cosign verify --key photos2map.pub \
+          cosign verify \
+            --certificate-identity-regexp '^https://github.com/toozej/photos2map/.github/workflows/release.yaml@refs/tags/.*$' \
+            --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
             ${{ matrix.registry }}toozej/photos2map:${{ matrix.tag }}

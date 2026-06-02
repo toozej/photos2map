@@ -48,7 +48,7 @@ endif
 .PHONY: all vet test build release verify run up down distroless-build distroless-run install local local-vet local-test local-cover local-run local-bulk-run local-kill local-iterate local-release-test local-release local-sign local-verify local-release-verify local-install get-cosign-pub-key docker-login pre-commit-install pre-commit-run pre-commit pre-reqs update-golang-version upload-secrets-to-gh upload-secrets-envfile-to-1pass docs diagrams mutation-test test-changed watch-test profile-cpu profile-mem profile-all benchmark clean help
 
 all: vet pre-commit clean test build verify run ## Run default workflow via Docker
-local: local-update-deps local-vendor local-vet pre-commit clean local-test local-cover local-build local-sign local-verify local-kill local-run ## Run default workflow using locally installed Golang toolchain
+local:  local-update-deps local-vendor local-vet pre-commit clean local-test local-cover local-build local-release-test ## Run default workflow using locally installed Golang toolchain
 local-release-verify: local-release local-sign local-verify ## Release and verify using locally installed Golang toolchain
 pre-reqs: pre-commit-install ## Install pre-commit hooks and necessary binaries
 
@@ -83,8 +83,11 @@ release: ## Build and sign Docker image
 get-cosign-pub-key: ## Get photos2map Cosign public key from GitHub
 	test -f $(CURDIR)/photos2map.pub || curl --silent https://raw.githubusercontent.com/toozej/photos2map/main/photos2map.pub -O
 
-verify: get-cosign-pub-key ## Verify Docker image with Cosign
-	cosign verify --key $(CURDIR)/photos2map.pub $(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)
+verify: ## Verify Docker image with Cosign
+	cosign verify \
+		--certificate-identity-regexp '^https://github.com/toozej/photos2map/.github/workflows/release.yaml@refs/tags/.*$$' \
+		--certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+		$(IMAGE_AUTHOR)/$(IMAGE_NAME):$(IMAGE_TAG)
 
 run: ## Run built Docker image
 	-docker kill $(IMAGE_NAME)
