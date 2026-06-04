@@ -27,7 +27,7 @@ jobs:
           MAJOR="v$(echo "$TAG" | cut -d. -f1 | tr -d 'v')"
           echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
           echo "Parsed major version: $MAJOR from tag: $TAG"
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
       - name: Git config
