@@ -268,16 +268,14 @@ signs:
       - '--bundle=${signature}'
       - '${artifact}'
       - '--yes'
-    artifacts: all
+    artifacts: checksum
 
 docker_signs:
   - cmd: cosign
     artifacts: all
-    stdin: '{{ .Env.COSIGN_PASSWORD }}'
     output: true
     args:
       - 'sign'
-      - '--key=env://COSIGN_PRIVATE_KEY'
       - '--yes'
       - '${artifact}'
 

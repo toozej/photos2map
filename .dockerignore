@@ -18,6 +18,5 @@ Makefile
 Dockerfile*
 docker-compose.yml
 photos2map
-photos2map.key
 in/
 out/

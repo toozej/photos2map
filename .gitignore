@@ -1,6 +1,4 @@
 # Cosign
-photos2map.key
-cosign.key
 *.sig
 *.bundle
 
