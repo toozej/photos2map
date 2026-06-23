@@ -87,7 +87,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean --skip=announce,archive,before,homebrew,nfpm,sbom,sign,validate
+          args: release --clean --skip=announce,archive,before,homebrew,nfpm,sbom,validate
           workdir: '/home/runner/work/photos2map/photos2map'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
