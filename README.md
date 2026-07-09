@@ -1,5 +1,10 @@
 # photos2map
 
+**This repository has moved to [monogo](https://github.com/toozej/monogo).**
+
+
+
+
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/toozej/photos2map)
 [![Go Report Card](https://goreportcard.com/badge/github.com/toozej/photos2map)](https://goreportcard.com/report/github.com/toozej/photos2map)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/toozej/photos2map/cicd.yaml)
