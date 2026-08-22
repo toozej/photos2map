@@ -95,7 +95,7 @@ jobs:
           GORELEASER_CURRENT_TAG: ${{ steps.release_tag.outputs.tag }}
           GORELEASER_DOCKER_REFRESH: "true"
 
-      - uses: actions/attest-build-provenance@v4
+      - uses: actions/attest-build-provenance@v4.1.0
         with:
           subject-checksums: ./dist/digests.txt
 
